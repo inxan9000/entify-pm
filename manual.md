@@ -1,0 +1,70 @@
+# Entify #
+### Command-Line Arguments ###
+These are the available command-line arguments
+```
+ --init|-i	Run setup and initialize files
+ --update|-u	Update file list from remote server
+ --list|-l	List all installable packages from remote server
+ --give-me|-g	Install package from remote server sources
+ --remove|-r	Remove package
+ --help|-h	This help
+ --clean|-c	Clean out cached source and tar files
+ -x		Remove all Entify files and sources
+```
+
+### Install Entify ###
+
+simply download the tarball and extract. Make sure you have internet access to get the latest pkg.list file from my remote server. Then, run entify with the `--init` argument as root or by using `sudo` or `su -c` this creates the entify files and directories in /etc/entify.
+
+### Install Packages ###
+
+entify only knows of packages that **it** has installed itself. This means that even if you have `airpwn` installed, entify will not list is as installed when ran with the `./entify -l` argument. to install and application run the ` -l ` argument and select a package. you do not need to type the entire name of the package, entify is smart that way.
+```
+warcarrier:/appdev/entify# ./entify -l
+gpsd-3.2 - service daemon that monitors one or more GPSes
+aircrack-ng-1.1-r2279 - 802.11 Penetration testing suite of tools
+wbar-2.3.4 - Just a simple and highly customizable quick-launch tool
+freeradius-server-2.1.11 - demonstrate RADIUS impersonation vulnerabilities
+airpwn-1.4 - Airpwn is a framework for 802.11 (wireless) packet injection
+reaver-1.4 - Reaver implements a brute force attack against Wifi Protected Setup
+cowpatty-4.3 - Brute-force dictionary attack against WPA-PSK
+kismet-2013-03-R1b - 802.11 layer2 wireless network detector sniffer and intrusion detection system
+---------------------
+[ * ] 7 Total packages
+[ * ] 0 Installed
+
+warcarrier:/appdev/entify# ./entify -g wbar
+[ * ] Adding package: wbar
+[ + ] Getting source for wbar-2.3.4 from remote server, this may take some time.
+[ * ] Package is here, uncompressing.
+/appdev/entify
+[ * ] Running make install
+[ * ] Checking rules
+[ + ] Package has dependencies, installing: libglade2-dev libimlib2-dev intltool
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+libimlib2-dev is already the newest version.
+intltool is already the newest version.
+libglade2-dev is already the newest version.
+0 upgraded, 0 newly installed, 0 to remove and 8 not upgraded.
+warcarrier:/appdev/entify#
+```
+
+In the example above, i just passed "wbar' to the application and it knew that I meant `wbar-2.3.4` It then makes changes to the ` /etc/entify/pkg.list` file to reflect the installed applications
+
+### Remove Packages ###
+
+to remove a package use the `--remove` or `-r` argument with the package name afterwards. Just like installation, you do not need to pass the full correct name into the application. To uninstall `freeradius-server-2.1.11` for eaxmple can be done with a simple `./entify -r freeradius` or even `./entify -r freera`
+
+This process will remove the application and alter the `pkg.list` file in `/etc/entify` to reflect the change.
+
+### Remove Cached Files ###
+
+Passing the `-x` options will remove the `/etc/entify` directory entirely. This is equivalent to uninstalling entify. Re-installing Entify currently does not re-mark installed packages as installed, so this command is really only for debugging and development.
+
+Passing the `--clean` argument to entify will clean out the `/etc/entify/cache/` directory of tarballs and source code directories.
+
+### Update the pkg.list List ###
+
+Passing the `-u` or `--update` will pull down the new pkg.list file from my web-server and parse it to reflect your currently installed packages before overwriting the old. No backups of this file are stored and no other storage is needed using this method, making entify very small and lightweight.
